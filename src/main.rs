@@ -3,11 +3,34 @@ use std::{
     io::{stdin, stdout, Write},
     path::Path,
     process::{Child, Command, Stdio},
+    str::from_utf8,
 };
 
 fn main() {
+    let mut current_git_branch = String::new();
+    let git_check = Command::new("git")
+        .args(["rev-parse", "--is-inside-work-tree"])
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
+        .status()
+        .expect("true");
+
+    let _ = stdout().flush();
+    if git_check.success() {
+        println!("its a git repo");
+        let git_branch = Command::new("git")
+            .args(["branch", "--show-current"])
+            .output()
+            .unwrap();
+
+        current_git_branch.push_str(match from_utf8(&git_branch.stdout) {
+            Ok(v) => v,
+            Err(_) => panic!("not a utf8"),
+        });
+    }
+
     loop {
-        print!("> ");
+        print!("# \x1b[93m{} \x1b[0m>", current_git_branch.trim());
         let _ = stdout().flush();
 
         let mut input = String::new();
