@@ -30,7 +30,7 @@ fn main() {
     }
 
     loop {
-        print!("# \x1b[93m{} \x1b[0m>", current_git_branch.trim());
+        print!("# \x1b[93m{} \x1b[0m/ ", current_git_branch.trim());
         let _ = stdout().flush();
 
         let mut input = String::new();
